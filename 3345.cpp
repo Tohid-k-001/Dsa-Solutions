@@ -1,3 +1,6 @@
+#include <iostream>
+#include <vector>
+
 class Solution {
 public:
     int digitProduct(int num) {
