@@ -1,7 +1,6 @@
 class Solution {
 public:
     vector<int> validSequence(string word1, string word2) {
-
         int n = word1.size();
         int m = word2.size();
 
@@ -9,40 +8,38 @@ public:
 
         int p = 0;
 
-        for (int j = 0; j < m; j++) {
-
-            while (p < n && word1[p] != word2[j]) {
+        for (int i = 0; i < m; i++) {
+            while (p < n && word1[p] != word2[i]) {
                 p++;
             }
 
             if (p == n)
                 break;
 
-            pref[j] = p;
+            pref[i] = p;
             p++;
         }
-        vector<int> latest(m, -1);
+        vector<int> suff(m, -1);
 
         p = n - 1;
 
-        for (int j = m - 1; j >= 0; j--) {
-
-            while (p >= 0 && word1[p] != word2[j]) {
+        for (int i = m - 1; i >= 0; i--) {
+            while (p >= 0 && word1[p] != word2[i]) {
                 p--;
             }
 
             if (p < 0)
                 break;
 
-            latest[j] = p;
+            suff[i] = p;
             p--;
         }
+
         vector<int> runEnd(n);
 
         runEnd[n - 1] = n - 1;
 
         for (int i = n - 2; i >= 0; i--) {
-
             if (word1[i] == word1[i + 1])
                 runEnd[i] = runEnd[i + 1];
             else
@@ -50,108 +47,91 @@ public:
         }
 
 
-        vector<int> answer;
+        int bestPos = -1;
+        int bestMismatch = -1;
 
-        // case 1
-        if (pref[m - 1] != -1) {
-            answer = pref;
-        }
+        int lastPossiblePos = -1;
+        int lastPossibleMismatch = -1;
 
-        // case 2
-        for (int j = 0; j < m; j++) {
+        for (int i = 0; i < m; i++) {
 
-            // Last index used by the exact prefix
-            int prev = (j == 0 ? -1 : pref[j - 1]);
+            int previous = (i == 0 ? -1 : pref[i - 1]);
 
-            // If prefix cannot be formed, no later j works.
-            if (j > 0 && prev == -1)
+            if (i > 0 && previous == -1)
                 break;
 
-            int start = prev + 1;
+            int start = previous + 1;
 
             if (start >= n)
                 continue;
 
+            int mismatch;
 
-            // Find the earliest index whose character
-            // is DIFFERENT from word2[j].
-            int mismatchIndex;
-
-            if (word1[start] == word2[j]) {
-
-                // Skip the entire run of this character.
-                mismatchIndex = runEnd[start] + 1;
-
-            } else {
-
-                mismatchIndex = start;
+            if (word1[start] != word2[i]) {
+                mismatch = start;
+            } 
+            else {
+                mismatch = runEnd[start] + 1;
             }
 
-
-            // No position available for mismatch.
-            if (mismatchIndex >= n)
+            if (mismatch >= n)
                 continue;
 
-
-            // Make sure it really is a mismatch.
-            if (word1[mismatchIndex] == word2[j])
+            if (word1[mismatch] == word2[i])
                 continue;
 
-
-            // If this isn't the last character,
-            // we must still be able to form the suffix exactly.
-            if (j != m - 1) {
-
-                if (latest[j + 1] == -1)
+            if (i < m - 1) {
+                if (suff[i + 1] == -1)
                     continue;
 
-                // We need some valid suffix position
-                // strictly after mismatchIndex.
-                if (mismatchIndex >= latest[j + 1])
+                if (mismatch >= suff[i + 1])
                     continue;
             }
+            lastPossiblePos = i;
+            lastPossibleMismatch = mismatch;
 
+            if (pref[i] == -1 || mismatch < pref[i]) {
 
-            // Build candidate answer.
-            vector<int> candidate;
+                bestPos = i;
+                bestMismatch = mismatch;
 
-            // Exact prefix
-            for (int k = 0; k < j; k++) {
-                candidate.push_back(pref[k]);
-            }
-
-            // One mismatch
-            candidate.push_back(mismatchIndex);
-
-
-            // Match remaining suffix exactly.
-            int q = mismatchIndex + 1;
-            bool possible = true;
-
-            for (int k = j + 1; k < m; k++) {
-
-                while (q < n && word1[q] != word2[k]) {
-                    q++;
-                }
-
-                if (q == n) {
-                    possible = false;
-                    break;
-                }
-
-                candidate.push_back(q);
-                q++;
-            }
-
-
-            if (possible) {
-
-                if (answer.empty() || candidate < answer) {
-                    answer = candidate;
-                }
+                break;
             }
         }
 
-        return answer;
+        if (bestPos == -1) {
+            if (pref[m - 1] != -1) {
+                return pref;
+            }
+
+            if (lastPossiblePos == -1) {
+                return {};
+            }
+
+            bestPos = lastPossiblePos;
+            bestMismatch = lastPossibleMismatch;
+        }
+
+
+        vector<int> ans;
+
+        for (int i = 0; i < bestPos; i++) {
+            ans.push_back(pref[i]);
+        }
+        ans.push_back(bestMismatch);
+
+        int j = bestMismatch + 1;
+
+        for (int i = bestPos + 1; i < m; i++) {
+
+            while (j < n && word1[j] != word2[i]) {
+                j++;
+            }
+
+            ans.push_back(j);
+            j++;
+        }
+
+        return ans;
     }
 };
