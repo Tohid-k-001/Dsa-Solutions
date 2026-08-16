@@ -254,22 +254,6 @@ This section is especially useful for learning XOR patterns.
                         XOR Triplets II                   
   ------------------------------------------------------------------------------
 
-### XOR progression
-
-``` text
-136
- ↓
-1486
- ↓
-389
- ↓
-260
- ↓
-1442
- ↓
-3514
-```
-
 Important XOR ideas: - `x ^ x = 0` - `x ^ 0 = x` - XOR is associative -
 XOR is useful for cancellation - Prefix XOR can turn range-XOR
 conditions into lookup problems
@@ -461,11 +445,6 @@ For every DP problem, try to identify:
                                          Theory           
   ------------------------------------------------------------------------------
 
-### Recommended game-theory progression
-
-``` text
-877 → 486 → 1510 → 1406 → 1140 → 2029
-```
 
 ------------------------------------------------------------------------
 
@@ -566,88 +545,6 @@ For every DP problem, try to identify:
                    3867 Sum of GCD of    GCD + Sorting    [3867.cpp](3867.cpp)
                         Formed Pairs                      
   ------------------------------------------------------------------------------
-
-------------------------------------------------------------------------
-
-# 🗂️ Complete Problem Index
-
-For quick navigation, here are all **72 numbered LeetCode files**
-currently in the repository, sorted by problem number:
-
-      \# Solution
-  ------ ----------------------
-       1 [1.cpp](1.cpp)
-       3 [3.cpp](3.cpp)
-       4 [4.cpp](4.cpp)
-       6 [6.cpp](6.cpp)
-       7 [7.cpp](7.cpp)
-       8 [8.cpp](8.cpp)
-      10 [10.cpp](10.cpp)
-      11 [11.cpp](11.cpp)
-      36 [36.cpp](36.cpp)
-      73 [73.cpp](73.cpp)
-     128 [128.cpp](128.cpp)
-     136 [136.cpp](136.cpp)
-     169 [169.cpp](169.cpp)
-     209 [209.cpp](209.cpp)
-     215 [215.cpp](215.cpp)
-     217 [217.cpp](217.cpp)
-     242 [242.cpp](242.cpp)
-     260 [260.cpp](260.cpp)
-     268 [268.cpp](268.cpp)
-     287 [287.cpp](287.cpp)
-     349 [349.cpp](349.cpp)
-     387 [387.cpp](387.cpp)
-     389 [389.cpp](389.cpp)
-     448 [448.cpp](448.cpp)
-     486 [486.cpp](486.cpp)
-     496 [496.cpp](496.cpp)
-     628 [628.CPP](628.CPP)
-     633 [633.cpp](633.cpp)
-     643 [643.cpp](643.cpp)
-     705 [705.cpp](705.cpp)
-     877 [877.cpp](877.cpp)
-     904 [904.cpp](904.cpp)
-    1004 [1004.cpp](1004.cpp)
-    1081 [1081.cpp](1081.cpp)
-    1140 [1140.cpp](1140.cpp)
-    1260 [1260.cpp](1260.cpp)
-    1291 [1291.cpp](1291.cpp)
-    1301 [1301.cpp](1301.cpp)
-    1331 [1331.cpp](1331.cpp)
-    1406 [1406.cpp](1406.cpp)
-    1442 [1442.cpp](1442.cpp)
-    1456 [1456.cpp](1456.cpp)
-    1464 [1464.cpp](1464.cpp)
-    1486 [1486.cpp](1486.cpp)
-    1510 [1510.cpp](1510.cpp)
-    1790 [1790.cpp](1790.cpp)
-    2029 [2029.cpp](2029.cpp)
-    2213 [2213.cpp](2213.cpp)
-    2461 [2461.cpp](2461.cpp)
-    2685 [2685.cpp](2685.cpp)
-    2958 [2958.cpp](2958.cpp)
-    2996 [2996.cpp](2996.cpp)
-    3014 [3014.cpp](3014.cpp)
-    3016 [3016.cpp](3016.cpp)
-    3090 [3090.cpp](3090.cpp)
-    3286 [3286.py](3286.py)
-    3302 [3302.cpp](3302.cpp)
-    3310 [3310.cpp](3310.cpp)
-    3312 [3312.cpp](3312.cpp)
-    3336 [3336.cpp](3336.cpp)
-    3345 [3345.cpp](3345.cpp)
-    3348 [3348.cpp](3348.cpp)
-    3499 [3499.cpp](3499.cpp)
-    3514 [3514.cpp](3514.cpp)
-    3517 [3517.cpp](3517.cpp)
-    3518 [3518.cpp](3518.cpp)
-    3532 [3532.cpp](3532.cpp)
-    3620 [3620.cpp](3620.cpp)
-    3634 [3634.cpp](3634.cpp)
-    3731 [3731.cpp](3731.cpp)
-    3756 [3756.cpp](3756.cpp)
-    3867 [3867.cpp](3867.cpp)
 
 ------------------------------------------------------------------------
 
