@@ -1,6 +1,8 @@
 class Solution {
 public:
     string lexGreaterPermutation(string s, string target) {
+        int n = s.size();
+
         int freq[26] = {};
 
         // Count characters of s
@@ -8,65 +10,68 @@ public:
             freq[c - 'a']++;
         }
 
-        string ans = target;
+        // Try to match target from left to right
+        for (int i = 0; i < n; i++) {
 
-        // Try to keep matching target from left to right
-        for (int i = 0; i < target.size(); i++) {
-
-            // Can we use target[i]?
+            // If target[i] is available, use it
             if (freq[target[i] - 'a'] > 0) {
                 freq[target[i] - 'a']--;
-                continue;
             }
+            else {
+                // We cannot continue.
+                // Go backwards and try to make something bigger.
 
-            // We cannot match target[i].
-            // Go backwards to find a position to increase.
-            for (int j = i; j >= 0; j--) {
+                for (int j = i - 1; j >= 0; j--) {
 
-                // Put back the character used at j
-                freq[target[j] - 'a']++;
+                    // Return the character used at position j
+                    freq[target[j] - 'a']++;
 
-                // Find the smallest character > target[j]
-                for (int c = target[j] - 'a' + 1; c < 26; c++) {
+                    // Find smallest character > target[j]
+                    for (int c = target[j] - 'a' + 1; c < 26; c++) {
 
-                    if (freq[c] > 0) {
+                        if (freq[c] > 0) {
 
-                        ans = target.substr(0, j);
+                            string ans = target.substr(0, j);
 
-                        ans += char('a' + c);
-                        freq[c]--;
+                            // Make this position slightly bigger
+                            ans += char('a' + c);
+                            freq[c]--;
 
-                        // Put remaining characters in sorted order
-                        for (int k = 0; k < 26; k++) {
-                            while (freq[k] > 0) {
-                                ans += char('a' + k);
-                                freq[k]--;
+                            // Add remaining characters in sorted order
+                            for (int k = 0; k < 26; k++) {
+                                while (freq[k] > 0) {
+                                    ans += char('a' + k);
+                                    freq[k]--;
+                                }
                             }
-                        }
 
-                        return ans;
+                            return ans;
+                        }
                     }
                 }
-            }
 
-            return "";
+                return "";
+            }
         }
 
         // target itself can be formed.
-        // But we need STRICTLY greater.
-        // So try to increase from the last position.
-        for (int j = target.size() - 1; j >= 0; j--) {
+        // But we need something STRICTLY greater.
+        for (int j = n - 1; j >= 0; j--) {
 
+            // Return the character used at j
             freq[target[j] - 'a']++;
 
+            // Find smallest character greater than target[j]
             for (int c = target[j] - 'a' + 1; c < 26; c++) {
 
                 if (freq[c] > 0) {
 
-                    ans = target.substr(0, j);
+                    string ans = target.substr(0, j);
+
                     ans += char('a' + c);
                     freq[c]--;
 
+                    // Smallest possible suffix
                     for (int k = 0; k < 26; k++) {
                         while (freq[k] > 0) {
                             ans += char('a' + k);
