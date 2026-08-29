@@ -1,30 +1,33 @@
 class Solution {
 public:
 
-    string makePalindrome(string left, char mid) {
+    string build(string left, char mid, bool hasMid) {
+
         string right = left;
         reverse(right.begin(), right.end());
 
-        return left + string(1, mid) + right;
+        if (hasMid)
+            return left + string(1, mid) + right;
+
+        return left + right;
     }
 
-    bool possible(string left, char mid, vector<int>& cnt, string target) {
 
-        // Put remaining characters in decreasing order
+    bool canMake(string left, char mid, bool hasMid,
+                 vector<int>& cnt, string target) {
+
         string remaining = "";
 
+        // Make the LARGEST possible remaining half
         for (int i = 25; i >= 0; i--) {
-            remaining += string(cnt[i], 'a' + i);
+            remaining += string(cnt[i], char('a' + i));
         }
 
-        // Largest possible left half
-        string newLeft = left + remaining;
-
-        // Build palindrome
-        string candidate = makePalindrome(newLeft, mid);
+        string candidate = build(left + remaining, mid, hasMid);
 
         return candidate > target;
     }
+
 
     string lexPalindromicPermutation(string s, string target) {
 
@@ -34,34 +37,36 @@ public:
             cnt[c - 'a']++;
         }
 
-        // Check whether palindrome is possible
+        // Check if palindrome is possible
         int odd = 0;
         char mid = 0;
 
         for (int i = 0; i < 26; i++) {
+
             if (cnt[i] % 2 == 1) {
                 odd++;
-                mid = 'a' + i;
+                mid = char('a' + i);
             }
         }
 
-        if (odd > 1) {
+        if (odd > 1)
             return "";
-        }
 
-        // Characters available for left half
+        bool hasMid = (s.length() % 2 == 1);
+
+        // Frequency for left half
         vector<int> half(26);
 
         for (int i = 0; i < 26; i++) {
             half[i] = cnt[i] / 2;
         }
 
-        int n = s.length();
-        int halfLen = n / 2;
-
         string left = "";
 
-        for (int pos = 0; pos < halfLen; pos++) {
+        // Build left half
+        for (int pos = 0; pos < s.length() / 2; pos++) {
+
+            bool found = false;
 
             // Try smallest character first
             for (int c = 0; c < 26; c++) {
@@ -69,22 +74,27 @@ public:
                 if (half[c] == 0)
                     continue;
 
-                // Choose this character
-                left += char('a' + c);
+                left.push_back(char('a' + c));
                 half[c]--;
 
-                // Check if some valid completion exists
-                if (possible(left, mid, half, target)) {
+                // Can we still make a palindrome > target?
+                if (canMake(left, mid, hasMid, half, target)) {
+
+                    found = true;
                     break;
                 }
 
-                // This character doesn't work
+                // Undo
                 left.pop_back();
                 half[c]++;
             }
+
+            // Nothing worked
+            if (!found)
+                return "";
         }
 
-        string answer = makePalindrome(left, mid);
+        string answer = build(left, mid, hasMid);
 
         if (answer > target)
             return answer;
