@@ -2,47 +2,50 @@ class Solution {
 public:
 
     struct Node {
-        int l;
-        int r;
-        int w;
-        int idx;
+        int l, r, w, idx;
+    };
+
+    struct State {
+        long long score = 0;
+        array<int, 4> ids = {-1, -1, -1, -1};
+        int cnt = 0;
     };
 
     vector<Node> a;
-    
-    // dp[i][k] = best result from i onward,
-    // where we can still choose k intervals.
-    pair<long long, vector<int>> dp[50001][5];
+    vector<vector<State>> dp;
+    vector<vector<bool>> vis;
 
-    bool visited[50001][5] = {};
+    State solve(int i, int k) {
 
-    pair<long long, vector<int>> solve(int i, int k) {
-
-        if (i == a.size() || k == 0) {
-            return {0, {}};
+        if (i >= a.size() || k == 0) {
+            return State();
         }
 
-        if (visited[i][k]) {
+        if (vis[i][k]) {
             return dp[i][k];
         }
 
-        visited[i][k] = true;
+        vis[i][k] = true;
 
-        // Option 1: skip current interval
-        auto skip = solve(i + 1, k);
+        // -------------------------
+        // 1. SKIP current interval
+        // -------------------------
+        State skip = solve(i + 1, k);
 
-        // Option 2: take current interval
 
-        int r = a[i].r;
+        // -------------------------
+        // 2. TAKE current interval
+        // -------------------------
 
-        // Find first interval whose start > r
+        // Find first interval with start > current end
         int lo = i + 1;
         int hi = a.size();
 
         while (lo < hi) {
+
             int mid = lo + (hi - lo) / 2;
 
-            if (a[mid].l > r) {
+            if (a[mid].l > a[i].r) {
                 hi = mid;
             }
             else {
@@ -52,42 +55,80 @@ public:
 
         int next = lo;
 
-        auto takeNext = solve(next, k - 1);
+        State nxt = solve(next, k - 1);
 
-        long long takeScore = a[i].w + takeNext.first;
+        State take;
 
-        vector<int> takeIndices = takeNext.second;
-        takeIndices.push_back(a[i].idx);
+        take.score = a[i].w + nxt.score;
 
-        sort(takeIndices.begin(), takeIndices.end());
+        // nxt can have at most k-1 elements.
+        // Since k <= 4, take can have at most 4.
+        take.cnt = nxt.cnt + 1;
 
-        pair<long long, vector<int>> take = {
-            takeScore,
-            takeIndices
-        };
+        take.ids = nxt.ids;
 
-        // Compare
-        if (take.first > skip.first) {
+        // Insert current index into sorted order
+        int pos = 0;
+
+        while (pos < nxt.cnt &&
+               take.ids[pos] < a[i].idx) {
+            pos++;
+        }
+
+        // Shift elements to the right
+        for (int j = take.cnt - 1; j > pos; j--) {
+            take.ids[j] = take.ids[j - 1];
+        }
+
+        take.ids[pos] = a[i].idx;
+
+
+        // -------------------------
+        // Compare TAKE and SKIP
+        // -------------------------
+
+        if (take.score > skip.score) {
             return dp[i][k] = take;
         }
 
-        if (take.first < skip.first) {
+        if (take.score < skip.score) {
             return dp[i][k] = skip;
         }
 
-        // Same score → lexicographically smaller
-        if (take.second < skip.second) {
+        // Same score.
+        // Choose lexicographically smaller indices.
+
+        int limit = min(take.cnt, skip.cnt);
+
+        for (int j = 0; j < limit; j++) {
+
+            if (take.ids[j] < skip.ids[j]) {
+                return dp[i][k] = take;
+            }
+
+            if (take.ids[j] > skip.ids[j]) {
+                return dp[i][k] = skip;
+            }
+        }
+
+        // If one is a prefix of the other,
+        // smaller number of elements is lexicographically smaller.
+        if (take.cnt < skip.cnt) {
             return dp[i][k] = take;
         }
 
         return dp[i][k] = skip;
     }
 
+
     vector<int> maximumWeight(vector<vector<int>>& intervals) {
 
         int n = intervals.size();
 
+        a.reserve(n);
+
         for (int i = 0; i < n; i++) {
+
             a.push_back({
                 intervals[i][0],
                 intervals[i][1],
@@ -96,14 +137,31 @@ public:
             });
         }
 
-        // Sort by starting position
-        sort(a.begin(), a.end(), [](Node& x, Node& y) {
+        // Sort by starting point
+        sort(a.begin(), a.end(), [](const Node& x, const Node& y) {
+
             if (x.l != y.l)
                 return x.l < y.l;
 
-            return x.r < y.r;
+            if (x.r != y.r)
+                return x.r < y.r;
+
+            return x.idx < y.idx;
         });
 
-        return solve(0, 4).second;
+
+        dp.resize(n, vector<State>(5));
+        vis.resize(n, vector<bool>(5, false));
+
+
+        State ans = solve(0, 4);
+
+        vector<int> result;
+
+        for (int i = 0; i < ans.cnt; i++) {
+            result.push_back(ans.ids[i]);
+        }
+
+        return result;
     }
 };
