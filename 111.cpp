@@ -6,17 +6,12 @@ public:
             return 0;
         }
 
-        if (root->left == NULL && root->right == NULL) {
-            return 1;
+        if(root->left == NULL){
+            return 1 + minDepth(root->right);
         }
-
-        int leftDepth = minDepth(root->left);
-        int rightDepth = minDepth(root->right);
-
-        if (root->left == NULL || root->right == NULL) {
-            return leftDepth + rightDepth + 1;
+        if(root->rght == NULL){
+            return 1 + minDepth(root->left);
         }
-
-        return min(leftDepth, rightDepth) + 1;
+        return 1 + min(minDepth(root->left), minDepth(root->right));
     }
 };
