@@ -23,7 +23,6 @@ public:
             if(low < 0){
                 low = 0;
             }
-
         }
         return low==0;
     }
